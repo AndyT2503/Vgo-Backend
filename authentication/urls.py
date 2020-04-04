@@ -1,8 +1,10 @@
 from django.conf.urls import url
 
-from .views import RegistrationAPIView
+from .views import RegistrationAPIView, LoginAPIView
 
 app_name = 'authentication'
 urlpatterns = [
-    url('users/', RegistrationAPIView.as_view()),
+    #use  reg to define url
+    url(r'users/?$', RegistrationAPIView.as_view()),
+    url(r'^users/login/?$', LoginAPIView.as_view()),
 ]
