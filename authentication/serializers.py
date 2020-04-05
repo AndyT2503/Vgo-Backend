@@ -23,7 +23,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validated_data)
 
 
-#create Serializer
+#create Serializer default
 class LoginSerializer(serializers.Serializer):
     email = serializers.CharField(max_length=255)
     username = serializers.CharField(max_length=255, read_only=True)
@@ -70,3 +70,38 @@ class LoginSerializer(serializers.Serializer):
             'name': user.name,
             'token': user.token
         }
+
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        max_length=128,
+        min_length=8,
+        write_only=True
+    )
+
+    class Meta:
+        model = User
+        fields = ('email', 'username', 'password', 'token',)
+
+        #set token to be read only
+        read_only_fields = ('token',)
+
+
+    def update(self, instance, validated_data):
+        #remove password from validated_data bcz default django provide func to handle update (hash..)
+        password = validated_data.pop('password', None)
+
+        #update user with fields in validated_data
+        for (key, value) in validated_data.items():
+            setattr(instance, key, value)
+
+        if password is not None:
+            # `.set_password()`  handles all
+            # of the security stuff that we shouldn't be concerned with.
+            instance.set_password(password)
+
+        # After everything has been updated we must explicitly save
+        # the model. It's worth pointing out that `.set_password()` does not
+        # save the model.
+        instance.save()
+
+        return instance

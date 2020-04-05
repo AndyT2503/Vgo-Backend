@@ -1,9 +1,10 @@
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import RegistrationSerializer, LoginSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer
 #renders help format return json to client
 from .renderers import UserJSONRenderer
 
@@ -40,5 +41,36 @@ class LoginAPIView(APIView):
         # handles everything we need.
         serializer = self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = (UserJSONRenderer,)
+    serializer_class = UserSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        # There is nothing to validate or save here. Instead, we just want the
+        # serializer to handle turning our `User` object into something that
+        # can be JSONified and sent to the client.
+
+        serializer = self.serializer_class(request.user)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def update(self, request, *args, **kwargs):
+        serializer_data = request.data.get('user', {})
+
+        # By default, serializers must be passed values for all required fields or they will raise validation errors.
+        #You can use the partial argument in order to allow partial updates.
+
+        #pass request.user object so when call serializer.save it call update func
+        serializer = self.serializer_class(
+            request.user, data=serializer_data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        #Calling .save() will either create a new instance, or update an existing instance,
+        #depending on if an existing instance was passed when instantiating the serializer class
+        serializer.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)

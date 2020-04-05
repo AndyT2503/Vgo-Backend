@@ -130,4 +130,7 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'custom.exceptions.custom_exception_handler',
     #config default key for validate non field (login error,...)
     'NON_FIELD_ERRORS_KEY': 'error',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'authentication.backends.JWTAuthentication',
+    ),
 }
