@@ -18,7 +18,8 @@ class RegistrationAPIView(APIView):
 
     def post(self, request):
         user = request.data.get('user', {})
-
+        if user == {}:
+            user = request.data
         #validate by RegistrationSerializer
         serializer = self.serializer_class(data=user)
         #raise_exception true to handle and return JSON format ValidationErrors to client
@@ -60,7 +61,8 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         serializer_data = request.data.get('user', {})
-
+        if serializer_data == {}:
+            serializer_data = request.data
         # By default, serializers must be passed values for all required fields or they will raise validation errors.
         #You can use the partial argument in order to allow partial updates.
 

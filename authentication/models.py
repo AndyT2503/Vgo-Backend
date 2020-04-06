@@ -25,7 +25,7 @@ class UserManager(BaseUserManager):
     to create `User` objects.
     """
 
-    def create_user(self, name, email, password=None):
+    def create_user(self, name, email, image=None, password=None):
         #add validate username password.
         if name is None:
             raise TypeError('Users must have a username.')
@@ -35,6 +35,10 @@ class UserManager(BaseUserManager):
         user = self.model(name=name, email=self.normalize_email(email))
         user.set_password(password)
         user.save()
+        if image:
+            avatar = Image(user=user)
+            avatar.file = image['file']
+            avatar.save()
 
         return user
 
@@ -128,3 +132,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def is_followed_by(self, user):
         """Returns True if `user` is following us; False otherwise."""
         return self.followed_by.filter(pk=user.pk).exists()
+
+class Image(models.Model):
+    user = models.OneToOneField(User, models.DO_NOTHING)
+    file = models.ImageField(upload_to='images/')

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import User
-
+from .models import User, Image
+import pdb;
 #create Serializer type model serializer
 class RegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -10,13 +10,15 @@ class RegistrationSerializer(serializers.ModelSerializer):
         write_only=True
     )
 
+    avatar = serializers.ImageField(source='image.file', required=False)
+
     #setToken to be readonly
     token = serializers.CharField(max_length=255, read_only=True)
 
     class Meta:
         model = User
         #set field that can include in req.
-        fields = ['email', 'name', 'password', 'token']
+        fields = ['email', 'name', 'avatar', 'password', 'token',]
 
     def create(self, validated_data):
         #**mean arbitrary number of keyword arguments as input.
@@ -78,9 +80,12 @@ class UserSerializer(serializers.ModelSerializer):
         write_only=True
     )
 
+    #source='image.file' mean field of user.image.file
+    #when req have avatar field,set image.file in validated_data = avatar.file
+    avatar = serializers.ImageField(source='image.file', required=False)
     class Meta:
         model = User
-        fields = ('email', 'username', 'password', 'token',)
+        fields = ('email', 'name', 'password', 'token', 'avatar')
 
         #set token to be read only
         read_only_fields = ('token',)
@@ -89,16 +94,20 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         #remove password from validated_data bcz default django provide func to handle update (hash..)
         password = validated_data.pop('password', None)
-
         #update user with fields in validated_data
         for (key, value) in validated_data.items():
-            setattr(instance, key, value)
+            #validated_data.items() will return user model's field name, not req'field
+            if key == 'image':
+                image = Image(user=instance)
+                image.file = validated_data.get('image')['file']
+                image.save()
+            else:
+                setattr(instance, key, value)
 
         if password is not None:
             # `.set_password()`  handles all
             # of the security stuff that we shouldn't be concerned with.
             instance.set_password(password)
-
         # After everything has been updated we must explicitly save
         # the model. It's worth pointing out that `.set_password()` does not
         # save the model.
