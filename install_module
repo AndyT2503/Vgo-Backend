@@ -1,2 +1,3 @@
-pip install django-extensions
+django-extensions
 PyJWT
+django-cors-headers
