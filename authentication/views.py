@@ -40,7 +40,7 @@ class LoginAPIView(APIView):
         # the registration endpoint. This is because we don't  have
         # anything to save. Instead, the `validate` method on our serializer
         # handles everything we need.
-        serializer = self.serializer_class(data=user)
+        serializer = self.serializer_class(data=user, context={"request": request})
         serializer.is_valid(raise_exception=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -54,8 +54,8 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         # There is nothing to validate or save here. Instead, we just want the
         # serializer to handle turning our `User` object into something that
         # can be JSONified and sent to the client.
-
-        serializer = self.serializer_class(request.user)
+        # context={"request": request} will return full url of imageField
+        serializer = self.serializer_class(request.user, context={"request": request})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 

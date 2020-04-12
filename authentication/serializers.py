@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from .models import User, Image
+from django.core.exceptions import ObjectDoesNotExist
 import pdb;
 #create Serializer type model serializer
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -28,9 +29,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
 #create Serializer default
 class LoginSerializer(serializers.Serializer):
     email = serializers.CharField(max_length=255)
-    username = serializers.CharField(max_length=255, read_only=True)
     password = serializers.CharField(max_length=128, write_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
+    name = serializers.CharField(max_length=255, read_only=True)
 
     def validate(self, data):
         #custom validate function
@@ -61,7 +62,7 @@ class LoginSerializer(serializers.Serializer):
         # `authenticate` will return `None`. Raise an exception in this case.
         if user is None:
             raise serializers.ValidationError(
-                'A user with this email and password was not found.'
+                'Mật khẩu hoặc email không đúng.'
             )
 
         # The `validate` method should return a dictionary of validated data.
@@ -70,7 +71,7 @@ class LoginSerializer(serializers.Serializer):
         return {
             'email': user.email,
             'name': user.name,
-            'token': user.token
+            'token': user.token,
         }
 
 class UserSerializer(serializers.ModelSerializer):
@@ -79,7 +80,6 @@ class UserSerializer(serializers.ModelSerializer):
         min_length=8,
         write_only=True
     )
-
     #source='image.file' mean field of user.image.file
     #when req have avatar field,set image.file in validated_data = avatar.file
     avatar = serializers.ImageField(source='image.file', required=False)
@@ -89,7 +89,6 @@ class UserSerializer(serializers.ModelSerializer):
 
         #set token to be read only
         read_only_fields = ('token',)
-
 
     def update(self, instance, validated_data):
         #remove password from validated_data bcz default django provide func to handle update (hash..)

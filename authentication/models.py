@@ -61,7 +61,7 @@ class UserManager(BaseUserManager):
 #Override User of Django AbstractBaseUser
 class User(AbstractBaseUser, PermissionsMixin):
 
-    name = models.CharField(db_index=True, max_length=255, unique=True)
+    name = models.CharField(db_index=True, max_length=255)
 
     email = models.EmailField(db_index=True, unique=True)
 
