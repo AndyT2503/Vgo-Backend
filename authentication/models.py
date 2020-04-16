@@ -65,11 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(db_index=True, unique=True)
 
-    follows = models.ManyToManyField(
-        'self',
-        related_name='followed_by',
-        symmetrical=False
-    )
+    
 
     # followings = models.ManyToManyField(
     #     'self',
@@ -117,21 +113,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         return token.decode('utf-8')
 
-    def follow(self, user):
-        """Follow `user` if we're not already following `user`."""
-        self.follows.add(user)
-
-    def unfollow(self, user):
-        """Unfollow `user` if we're already following `user`."""
-        self.follows.remove(user)
-
-    def is_following(self, user):
-        """Returns True if we're following `user`; False otherwise."""
-        return self.follows.filter(pk=user.pk).exists()
-
-    def is_followed_by(self, user):
-        """Returns True if `user` is following us; False otherwise."""
-        return self.followed_by.filter(pk=user.pk).exists()
+   
 
 class Image(models.Model):
     user = models.OneToOneField(User, models.DO_NOTHING)

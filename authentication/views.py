@@ -1,10 +1,12 @@
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.exceptions import NotFound
 
 from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer
+from .models import User
 #renders help format return json to client
 from .renderers import UserJSONRenderer
 
@@ -76,3 +78,5 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
