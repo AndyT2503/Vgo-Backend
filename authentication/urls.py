@@ -7,5 +7,6 @@ urlpatterns = [
     #use  reg to define url
     url(r'user/?$', UserRetrieveUpdateAPIView.as_view()),
     url(r'users/?$', RegistrationAPIView.as_view()),
-    url(r'^users/login/?$', LoginAPIView.as_view()),
+    url(r'users/login/?$', LoginAPIView.as_view()),
+    
 ]
