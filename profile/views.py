@@ -47,7 +47,7 @@ class ProfileFollowAPIView(APIView):
         #    raise serializers.ValidationError('You have not already followed.')
 
         follower.unfollow(followee)
-
+        
         serializer = self.serializer_class(followee, context={
             'request': request
         })
@@ -77,7 +77,7 @@ class ProfileFollowAPIView(APIView):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
-     def get(self, request, username=None):
+    def get(self, request, username=None):
         
 
         try:
