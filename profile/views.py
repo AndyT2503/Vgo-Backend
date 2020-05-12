@@ -38,7 +38,7 @@ class ProfileFollowAPIView(APIView):
         follower = self.request.user.profile
 
         try:
-            followee = Profile.objects.get(user__username=username)
+            followee = Profile.objects.get(user__name=username)
         except Profile.DoesNotExist:
             raise NotFound('A profile with this username was not found.')
         
@@ -58,7 +58,7 @@ class ProfileFollowAPIView(APIView):
         follower = self.request.user.profile
 
         try:
-            followee = Profile.objects.get(user__username=username)
+            followee = Profile.objects.get(user__name=username)
         except Profile.DoesNotExist:
             raise NotFound('A profile with this username was not found.')
 
@@ -81,7 +81,7 @@ class ProfileFollowAPIView(APIView):
         
 
         try:
-            followee = Profile.objects.get(user__username=username)
+            followee = Profile.objects.get(user__name=username)
         except Profile.DoesNotExist:
             raise NotFound('A profile with this username was not found.')
                             
