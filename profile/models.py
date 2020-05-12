@@ -49,3 +49,4 @@ class Profile(TimeStampedModel):
     def is_followed_by(self, profile):
         """Returns True if `profile` is following us; False otherwise."""
         return self.followed_by.filter(pk=profile.pk).exists()
+
