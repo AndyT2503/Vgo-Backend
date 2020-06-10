@@ -19,7 +19,7 @@ class ProfileRetrieveAPIView(RetrieveAPIView):
         # Try to retrieve the requested profile and throw an exception if the
         # profile could not be found.
         try:
-            profile = self.queryset.get(user__username=username)
+            profile = self.queryset.get(user__name=username)
         except Profile.DoesNotExist:
             raise NotFound('A profile with this username does not exist.')
 
@@ -77,17 +77,5 @@ class ProfileFollowAPIView(APIView):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
-    def get(self, request, username=None):
-        
-
-        try:
-            followee = Profile.objects.get(user__name=username)
-        except Profile.DoesNotExist:
-            raise NotFound('A profile with this username was not found.')
-                            
-        list_follows= followee.follows
-
-        serializer = self.serializer_class(list_follows, many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     

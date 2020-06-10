@@ -17,7 +17,7 @@ if settings.DEBUG:
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
-   
+   url(r'^api/', include('status.urls', namespace='status')),
     url(r'^api/', include('authentication.urls', namespace='authentication')),
     url(r'^api/', include('profile.urls', namespace='profile')),
 ]

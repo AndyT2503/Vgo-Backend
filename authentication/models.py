@@ -35,10 +35,10 @@ class UserManager(BaseUserManager):
         user = self.model(name=name, email=self.normalize_email(email))
         user.set_password(password)
         user.save()
-        if image:
-            avatar = Image(user=user)
-            avatar.file = image['file']
-            avatar.save()
+        #if image:
+        #    avatar = Image(user=user)
+        #    avatar.file = image['file']
+        #    avatar.save()
 
         return user
 
