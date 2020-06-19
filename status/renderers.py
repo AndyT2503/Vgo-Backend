@@ -6,3 +6,8 @@ class StatusJSONRenderer(ConduitJSONRenderer):
     object_label = 'status'
     pagination_object_label = 'statuses'
     pagination_count_label = 'statusesCount'
+
+class CommentJSONRenderer(ConduitJSONRenderer):
+    object_label = 'comment'
+    pagination_object_label = 'comments'
+    pagination_count_label = 'commentsCount'

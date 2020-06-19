@@ -1,10 +1,10 @@
 from rest_framework import serializers
 from profile.serializers import ProfileSerializer
-from .models import Status
+from .models import Status, Comment
 
 class StatusSerializer(serializers.ModelSerializer):
 
-    profile = ProfileSerializer(read_only=True)
+    author = ProfileSerializer(read_only=True)
     slug = serializers.SlugField(required=False)
     
     #Thời điểm khởi tạo
@@ -12,12 +12,12 @@ class StatusSerializer(serializers.ModelSerializer):
     updatedAt = serializers.SerializerMethodField(method_name='get_updated_at')
     class Meta:
         models = Status
-        fields = ('profile', 'slug', 'title', 'content', 'createdAt', 'updatedAt',)
+        fields = ('author', 'slug', 'title','location', 'content', 'createdAt', 'updatedAt',)
 
     def create(self, validated_data):
-        profile= self.context.get('profile', None)
+        author= self.context.get('author', None)
 
-        status = Status.objects.create(profile=profile, **validated_data)
+        status = Status.objects.create(author=author, **validated_data)
 
         return status
 
@@ -26,3 +26,35 @@ class StatusSerializer(serializers.ModelSerializer):
     
     def get_updated_at(self, instance):
         return instance.updated_at.isoformat()
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = ProfileSerializer(required=False)
+
+    createdAt = serializers.SerializerMethodField(method_name='get_created_at')
+    updatedAt = serializers.SerializerMethodField(method_name='get_updated_at')
+
+    class Meta:
+        model = Comment
+        fields = (
+            'id',
+            'author',
+            'body',
+            'createdAt',
+            'updatedAt',
+        )
+
+    def create(self, validated_data):
+        status = self.context['status']
+        author = self.context['author']
+
+        return Comment.objects.create(
+            author=author, status=status, **validated_data
+        )
+
+    def get_created_at(self, instance):
+        return instance.created_at.isoformat()
+
+    def get_updated_at(self, instance):
+        return instance.updated_at.isoformat()
+

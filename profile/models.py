@@ -42,7 +42,7 @@ class Profile(TimestampedModel):
         symmetrical=False
     )
 
-    #status = models.ManyToManyField('status.Status', related_name='posted_by')
+    favorites = models.ManyToManyField('status.Status', related_name='favorited_by')
 
 
     def __str__(self):
@@ -66,12 +66,12 @@ class Profile(TimestampedModel):
         return self.followed_by.filter(pk=profile.pk).exists()
 
 
-    #Hàm thêm xóa status
-    def add_status(self, status):
-        self.status.add(status)
+    #Hàm thêm xóa Favorite
+    def favorite(self, status):
+        self.favorites.add(status)
     
-    def remove_status(self, status):
-        self.status.remove(status)
+    def unfavorite(self, status):
+        self.favorites.remove(status)
     
 
 
