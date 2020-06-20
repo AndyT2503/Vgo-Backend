@@ -6,14 +6,17 @@ class StatusSerializer(serializers.ModelSerializer):
 
     author = ProfileSerializer(read_only=True)
     slug = serializers.SlugField(required=False)
-    
+    image = serializers.SerializerMethodField()
     #Thời điểm khởi tạo
     createdAt = serializers.SerializerMethodField(method_name='get_created_at')
     updatedAt = serializers.SerializerMethodField(method_name='get_updated_at')
     class Meta:
         models = Status
-        fields = ('author', 'slug', 'title','location', 'content', 'createdAt', 'updatedAt',)
+        fields = ('author', 'slug', 'title', 'image','location', 'content', 'createdAt', 'updatedAt',)
 
+    def get_image(self, obj):
+        if obj.image:
+            return obj.image
     def create(self, validated_data):
         author= self.context.get('author', None)
 
