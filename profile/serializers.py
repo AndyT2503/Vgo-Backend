@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from .models import Profile
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -32,3 +31,4 @@ class ProfileSerializer(serializers.ModelSerializer):
         followee = instance
 
         return follower.is_following(followee)
+

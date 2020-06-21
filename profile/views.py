@@ -4,6 +4,7 @@ from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Profile
 from .renderers import ProfileJSONRenderer
@@ -77,17 +78,5 @@ class ProfileFollowAPIView(APIView):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
-    def get(self, request, username=None):
-        
-
-        try:
-            followee = Profile.objects.get(user__name=username)
-        except Profile.DoesNotExist:
-            raise NotFound('A profile with this username was not found.')
-                            
-        list_follows= followee.follows
-
-        serializer = self.serializer_class(list_follows, many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     

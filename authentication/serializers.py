@@ -2,7 +2,8 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from .models import User, Image
 from django.core.exceptions import ObjectDoesNotExist
-import pdb;
+from profile.serializers import ProfileSerializer
+
 #create Serializer type model serializer
 class RegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -85,14 +86,16 @@ class UserSerializer(serializers.ModelSerializer):
     avatar = serializers.ImageField(source='image.file', required=False)
     class Meta:
         model = User
-        fields = ('email', 'name', 'password', 'token', 'avatar')
-
+        fields = ('email', 'name', 'password', 'token','profile' , 'avatar')
+        profile = ProfileSerializer(write_only=True)
         #set token to be read only
         read_only_fields = ('token',)
 
     def update(self, instance, validated_data):
         #remove password from validated_data bcz default django provide func to handle update (hash..)
         password = validated_data.pop('password', None)
+        #remove the profile data from the `validated_data` dictionary
+        profile_data = validated_data.pop('profile', {})
         #update user with fields in validated_data
         for (key, value) in validated_data.items():
             #validated_data.items() will return user model's field name, not req'field
@@ -112,6 +115,14 @@ class UserSerializer(serializers.ModelSerializer):
         # save the model.
         instance.save()
 
+
+        for (key, value) in profile_data.items():
+            # We're doing the same thing as above, but this time we're making
+            # changes to the Profile model.
+            setattr(instance.profile, key, value)
+            
+        # Save the profile just like we saved the user.
+        instance.profile.save()
         return instance
 
 
