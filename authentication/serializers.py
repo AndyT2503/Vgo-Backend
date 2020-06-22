@@ -97,7 +97,10 @@ class UserSerializer(serializers.ModelSerializer):
         for (key, value) in validated_data.items():
             #validated_data.items() will return user model's field name, not req'field
             if key == 'image':
-                image = Image(user=instance)
+                try:
+                    image = Image.objects.get(user=instance)
+                except Image.DoesNotExist:
+                    image = Image(user=instance)
                 image.file = validated_data.get('image')['file']
                 image.save()
             else:
