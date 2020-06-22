@@ -1,5 +1,6 @@
 #pip install PyJWT
 import jwt
+import pdb;
 
 from datetime import datetime, timedelta
 
@@ -35,14 +36,15 @@ class UserManager(BaseUserManager):
         user = self.model(name=name, email=self.normalize_email(email))
         user.set_password(password)
         user.save()
-        if image:
+        pdb.set_trace()
+        if image is not None:
             avatar = Image(user=user)
             avatar.file = image['file']
             avatar.save()
 
         return user
 
-    def create_superuser(self, name, email, password):
+    def create_superuser(self, name, email, None, password):
     #   """
     #   Create and return a `User` with superuser powers.
 
