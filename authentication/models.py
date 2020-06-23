@@ -1,7 +1,5 @@
 #pip install PyJWT
 import jwt
-import pdb;
-
 from datetime import datetime, timedelta
 
 from django.conf import settings
@@ -36,7 +34,6 @@ class UserManager(BaseUserManager):
         user = self.model(name=name, email=self.normalize_email(email))
         user.set_password(password)
         user.save()
-        pdb.set_trace()
         if image is not None:
             avatar = Image(user=user)
             avatar.file = image['file']
@@ -54,8 +51,9 @@ class UserManager(BaseUserManager):
         if password is None:
             raise TypeError('Superusers must have a password.')
 
-        user = self.create_user(name, email, password)
+        user = self.create_user(name, email, None, password)
         user.is_superuser = True
+        user.is_staff = True
         user.save()
 
         return user
@@ -73,6 +71,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         symmetrical=False
     )
 
+    is_staff = models.BooleanField(
+        default=False
+    )
     # followings = models.ManyToManyField(
     #     'self',
     #     related_name='followed_by',
