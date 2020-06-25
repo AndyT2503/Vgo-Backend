@@ -6,6 +6,8 @@ from rest_framework.permissions import (
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from rest_framework.filters import SearchFilter, OrderingFilter
+
 from .models import Post, Comment
 from .renderers import PostJSONRenderer, CommentJSONRenderer
 from .serializers import PostSerializer, CommentSerializer
@@ -105,7 +107,13 @@ class PostViewSet(mixins.CreateModelMixin,
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
+class ApiPostListView(generics.ListAPIView):
+	queryset = Post.objects.all()
+	serializer_class = PostSerializer
+	permission_classes = (IsAuthenticatedOrReadOnly,)
+	filter_backends = (SearchFilter, OrderingFilter)
+	search_fields = ('title', 'body', 'author__name')
+    
 class CommentsListCreateAPIView(generics.ListCreateAPIView):
     lookup_field = 'post__slug'
     lookup_url_kwarg = 'post_slug'

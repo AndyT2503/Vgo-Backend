@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     PostViewSet,
-    CommentsListCreateAPIView, CommentsDestroyAPIView
+    CommentsListCreateAPIView, CommentsDestroyAPIView, ApiPostListView
 )
 
 router = DefaultRouter(trailing_slash=False)
@@ -15,6 +15,9 @@ urlpatterns = [
 
     # url(r'^posts/feed/?$', PostsFeedAPIView.as_view()),
 
+    #.../a/postspi/list/?search=
+    url(r'^posts/list/?$',ApiPostListView.as_view()),
+    
     # url(r'^posts/(?P<post_slug>[-\w]+)/favorite/?$',
     #     PostsFavoriteAPIView.as_view()),
 
