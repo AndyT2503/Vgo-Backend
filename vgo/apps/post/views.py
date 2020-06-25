@@ -107,12 +107,25 @@ class PostViewSet(mixins.CreateModelMixin,
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class CustomSearchFilter(SearchFilter):
+    def get_search_fields(self, view, request):
+        if request.query_params.get('title'):
+            return ['title']
+        if request.query_params.get('body'):
+            return ['body']
+        if request.query_params.get('author'):
+            return ['author__name']
+        return super(CustomSearchFilter, self).get_search_fields(view, request)
+
 class ApiPostListView(generics.ListAPIView):
 	queryset = Post.objects.all()
 	serializer_class = PostSerializer
 	permission_classes = (IsAuthenticatedOrReadOnly,)
-	filter_backends = (SearchFilter, OrderingFilter)
+	filter_backends = (CustomSearchFilter, OrderingFilter)
 	search_fields = ('title', 'body', 'author__name')
+    
+
+
     
 class CommentsListCreateAPIView(generics.ListCreateAPIView):
     lookup_field = 'post__slug'
