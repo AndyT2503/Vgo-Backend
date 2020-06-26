@@ -9,7 +9,7 @@ class PostSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
     description = serializers.CharField(required=False)
     slug = serializers.SlugField(required=False)
-
+    
     # favorited = serializers.SerializerMethodField()
     # favoritesCount = serializers.SerializerMethodField(
     #     method_name='get_favorites_count'
@@ -25,12 +25,15 @@ class PostSerializer(serializers.ModelSerializer):
     createdAt = serializers.SerializerMethodField(method_name='get_created_at')
     updatedAt = serializers.SerializerMethodField(method_name='get_updated_at')
 
+    
     class Meta:
         model = Post
         fields = (
             'author',
             'body',
             'createdAt',
+            'point',
+            'location',
             'description',
             # 'favorited',
             # 'favoritesCount',
@@ -38,6 +41,7 @@ class PostSerializer(serializers.ModelSerializer):
             # 'tagList',
             'title',
             'updatedAt',
+            'image',
         )
 
     def create(self, validated_data):

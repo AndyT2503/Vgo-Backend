@@ -11,7 +11,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         write_only=True
     )
 
-    avatar = serializers.ImageField(source='image.file', required=False)
+    avatar = serializers.ImageField(required=False)
 
     #setToken to be readonly
     token = serializers.CharField(max_length=255, read_only=True)

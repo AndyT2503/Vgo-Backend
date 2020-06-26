@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'vgo.apps.core',
-    'vgo.apps.post'
+    'vgo.apps.post',
 ]
 
 MIDDLEWARE = [

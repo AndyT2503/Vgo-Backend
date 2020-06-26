@@ -21,7 +21,7 @@ class PostViewSet(mixins.CreateModelMixin,
     lookup_field = 'slug'
     queryset = Post.objects.select_related('author', 'author__user')
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    renderer_classes = (PostJSONRenderer,)
+    #renderer_classes = (PostJSONRenderer,)
     serializer_class = PostSerializer
 
     def get_queryset(self):
@@ -115,17 +115,33 @@ class CustomSearchFilter(SearchFilter):
             return ['body']
         if request.query_params.get('author'):
             return ['author__name']
+        if request.query_params.get('location'):
+            return ['location']
         return super(CustomSearchFilter, self).get_search_fields(view, request)
 
 class ApiPostListView(generics.ListAPIView):
-	queryset = Post.objects.all()
+	queryset = Post.objects.all().order_by('-point')
 	serializer_class = PostSerializer
 	permission_classes = (IsAuthenticatedOrReadOnly,)
 	filter_backends = (CustomSearchFilter, OrderingFilter)
-	search_fields = ('title', 'body', 'author__name')
+	search_fields = ('title', 'body', 'author__name', 'location')
     
 
+class PostRetrieveApiView(generics.RetrieveAPIView):
+    queryset = Post.objects.select_related('post')
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    serializer_class = PostSerializer
 
+    def retrieve(self, request, slug, *args, **kwargs):
+        try:
+            post = self.queryset.get(post__slug=slug)
+        except Post.DoesNotExist:
+            raise NotFound('An post with this slug does not exist.')
+        
+        serializer = self.serializer_class(post, context={'request': request})
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+	
     
 class CommentsListCreateAPIView(generics.ListCreateAPIView):
     lookup_field = 'post__slug'
