@@ -71,6 +71,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         symmetrical=False
     )
 
+
     is_staff = models.BooleanField(
         default=False
     )
